@@ -3,7 +3,6 @@ on:
     branches:
       - main
 name: docs
-
 jobs:
   docs:
     runs-on: ubuntu-latest
@@ -12,7 +11,7 @@ jobs:
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
-          vimdoc: my-template-docs
+          vimdoc: tv.nvim-docs
           version: "Neovim >= 0.8.0"
           demojify: true
           treesitter: true
