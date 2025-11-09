@@ -6,6 +6,8 @@
 
 Neovim integration for [television](https://github.com/alexpasmantier/television) - a fast and hackable fuzzy finder.
 
+[![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
+
 ## Requirements
 
 - Neovim >= 0.8.0
