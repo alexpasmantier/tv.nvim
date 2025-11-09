@@ -40,17 +40,16 @@ INSTALLATION                               *tv.nvim-docs-tv.nvim-installation*
     use "alexpasmantier/tv.nvim"
 <
 
-No setup required - works out of the box with sensible defaults.
-
 
 USAGE                                             *tv.nvim-docs-tv.nvim-usage*
 
 **Default keybindings:**
 
-- `<C-p>` - Find files
-- `<leader><leader>` - Search text
-- `<leader>tv` - Select channel
-
+  Keybinding      Action
+  --------------- ----------------
+  Ctrl+p          Find files
+  Leader+Leader   Search text
+  Leader+t+v      Select channel
 **Commands:**
 
 - `:TvFiles` - Find files
@@ -59,9 +58,10 @@ USAGE                                             *tv.nvim-docs-tv.nvim-usage*
 
 **Inside tv:**
 
-- `<Enter>` - Open file(s) in buffers
-- `<C-q>` - Send selections to quickfix list
-
+  Keybinding   Action
+  ------------ ----------------------------------
+  Enter        Open file(s) in buffers
+  Ctrl+q       Send selections to quickfix list
 
 CONFIGURATION                             *tv.nvim-docs-tv.nvim-configuration*
 
