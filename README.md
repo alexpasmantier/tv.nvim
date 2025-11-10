@@ -25,6 +25,8 @@ use "alexpasmantier/tv.nvim"
 
 ## 🖥️ Usage
 
+The integration currently only ports the "files" and "text" channels of television, which are the ones I use the most. More channels may be added in the future.
+
 **Default keybindings:**
 
 | Keybinding                                  | Action         |
