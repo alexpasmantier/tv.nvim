@@ -1,19 +1,19 @@
-# tv.nvim
+# 📺 tv.nvim
 
-Neovim integration for [television](https://github.com/alexpasmantier/television) - a fast and hackable fuzzy finder.
+Neovim integration for [television](https://github.com/alexpasmantier/television).
 
-The initial idea behind [Television](https://github.com/alexpasmantier/television) was to create something like the popular [telescope.nvim](https://github.com/tjdevries/telescope.nvim) plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
+The initial idea behind [television](https://github.com/alexpasmantier/television) was to create something like the popular [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
 
 This plugin brings Television back into Neovim through a thin Lua wrapper around the binary. It started as a way to dogfood my own project, but might be of interest to other tv enthusiasts as well. Full circle.
 
 [![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
 
-## Requirements
+## 🗒️ Requirements
 
 - Neovim >= 0.8.0
 - [television](https://github.com/alexpasmantier/television) binary in PATH
 
-## Installation
+## 📦 Installation
 
 ```lua
 -- lazy.nvim
@@ -23,7 +23,7 @@ This plugin brings Television back into Neovim through a thin Lua wrapper around
 use "alexpasmantier/tv.nvim"
 ```
 
-## Usage
+## 🖥️ Usage
 
 **Default keybindings:**
 
@@ -46,7 +46,7 @@ use "alexpasmantier/tv.nvim"
 | <kbd>Enter</kbd>             | Open file(s) in buffers          |
 | <kbd>Ctrl</kbd>+<kbd>q</kbd> | Send selections to quickfix list |
 
-## Configuration
+## ⚙️ Configuration
 
 Optional `setup()` for customization:
 
