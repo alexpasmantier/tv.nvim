@@ -72,7 +72,7 @@ local function populate_quickfix(items, title)
   end
 end
 
-local function launch_tv_channel(channel, handler, expect_key)
+local function launch_tv_channel(channel, handler, expect_key, prompt_input)
   M.create_win_and_buf(channel)
   local output = {}
 
@@ -86,6 +86,10 @@ local function launch_tv_channel(channel, handler, expect_key)
   end
 
   vim.list_extend(cmd, { channel })
+
+  if prompt_input then
+    vim.list_extend(cmd, { "-i" .. tostring(prompt_input) })
+  end
 
   vim.fn.jobstart(cmd, {
     on_exit = function(_, exit_code)
@@ -288,9 +292,9 @@ M.tv_files = function()
   launch_tv_channel("files", handle_files_output, expect_key)
 end
 
-M.tv_text = function()
+M.tv_text = function(prompt_input)
   local expect_key = convert_keybinding_to_tv_format(M.config.keybindings.text_qf)
-  launch_tv_channel("text", handle_text_output, expect_key)
+  launch_tv_channel("text", handle_text_output, expect_key, prompt_input)
 end
 
 -- Expose for testing

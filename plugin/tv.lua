@@ -13,10 +13,15 @@ end, {
   desc = "Launch tv for file searching",
 })
 
-vim.api.nvim_create_user_command("TvText", function()
-  require("tv").tv_text()
+vim.api.nvim_create_user_command("TvText", function(opts)
+  if string.len(opts.args) < 1 then
+    require("tv").tv_text()
+  else
+    require("tv").tv_text(tostring(opts.args))
+  end
 end, {
   desc = "Launch tv for text searching",
+  nargs = "*"
 })
 
 vim.api.nvim_create_user_command("Tv", function()
@@ -32,6 +37,10 @@ end, { desc = "TV: Find files" })
 
 vim.keymap.set("n", "<leader><leader>", function()
   require("tv").tv_text()
+end, { desc = "TV: Search text" })
+
+vim.keymap.set("n", "<leader>td", function()
+  require("tv").tv_todo()
 end, { desc = "TV: Search text" })
 
 vim.keymap.set("n", "<leader>tv", function()
