@@ -111,13 +111,12 @@ require('tv').setup({
         -- run a container with the selected image
         ['<CR>'] = function(entries, config)
           if #entries > 0 then
-            local image = entries[1]:match('^%S+')  -- Extract image name
             vim.ui.input({
               prompt = 'Container name: ',
               default = 'my-container',
             }, function(name)
               if name and name ~= '' then
-                local cmd = string.format('docker run -it --name %s %s', name, image)
+                local cmd = string.format('docker run -it --name %s %s', name, entries[1])
                 vim.cmd('!' .. cmd)
               end
             end)
