@@ -14,9 +14,16 @@ This plugin brings Television back into Neovim through a thin Lua wrapper around
 
 ## Overview
 
-If you already know [television](https://github.com/alexpasmantier/television), this plugin basically lets you launch
-any of its channels from within Neovim, and decide what to do with the selected results (open as buffers, send to
+If you're already familiar with [television](https://github.com/alexpasmantier/television), this plugin basically lets you launch any of its channels from within Neovim, and decide what to do with the selected results (open as buffers, send to
 quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using lua.
+
+### Examples
+  
+  | text | git-log |
+  | :--: | :--: |
+  | <img width="1494" height="974" alt="text" src="https://github.com/user-attachments/assets/4d3d3cf7-6837-48b0-858d-6113bc0b0c3c" /> | <img width="1496" height="977" alt="git-log" src="https://github.com/user-attachments/assets/5f450a3a-47d3-4104-9bdd-41de1a325a27" /> |
+  | **tldr** | **gh-prs** |
+  | <img width="1491" height="973" alt="tldr" src="https://github.com/user-attachments/assets/c438d252-d742-44a5-b4c6-b7d931ea11a1" /> | <img width="1495" height="976" alt="gh-prs" src="https://github.com/user-attachments/assets/25d2235b-3827-4cd1-8a6f-a23e2a4690b1" /> | 
 
 ## Installation
 
