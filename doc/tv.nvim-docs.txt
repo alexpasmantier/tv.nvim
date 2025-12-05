@@ -39,6 +39,18 @@ quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using
 lua.
 
 
+EXAMPLES ~
+
+  -----------------------------------------------------------------------
+                 text                               git-log
+  ----------------------------------- -----------------------------------
+                                      
+
+                 tldr                               gh-prs
+
+                                      
+  -----------------------------------------------------------------------
+
 INSTALLATION                               *tv.nvim-docs-tv.nvim-installation*
 
 >lua
