@@ -32,11 +32,11 @@ of interest to other tv enthusiasts as well. Full circle.
 
 OVERVIEW                                       *tv.nvim-docs-tv.nvim-overview*
 
-If you already know television <https://github.com/alexpasmantier/television>,
-this plugin basically lets you launch any of its channels from within Neovim,
-and decide what to do with the selected results (open as buffers, send to
-quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using
-lua.
+If you’re already familiar with television
+<https://github.com/alexpasmantier/television>, this plugin basically lets you
+launch any of its channels from within Neovim, and decide what to do with the
+selected results (open as buffers, send to quickfix, copy to clipboard, insert
+at cursor, checkout with git, etc.) using lua.
 
 
 EXAMPLES ~
