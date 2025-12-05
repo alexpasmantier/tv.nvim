@@ -6,18 +6,19 @@
 
 Neovim integration for [television](https://github.com/alexpasmantier/television).
 
-The initial idea behind [television](https://github.com/alexpasmantier/television) was to create something like the popular [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
+The initial idea behind television was to create something like the popular [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
 
 This plugin brings Television back into Neovim through a thin Lua wrapper around the binary. It started as a way to dogfood my own project, but might be of interest to other tv enthusiasts as well. Full circle.
 
 [![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
 
-## 🗒️ Requirements
+## Overview
 
-- Neovim >= 0.8.0
-- [television](https://github.com/alexpasmantier/television) binary in PATH
+If you already know [television](https://github.com/alexpasmantier/television), this plugin basically lets you launch
+any of its channels from within Neovim, and decide what to do with the selected results (open as buffers, send to
+quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using lua.
 
-## 📦 Installation
+## Installation
 
 ```lua
 -- lazy.nvim
@@ -27,72 +28,194 @@ This plugin brings Television back into Neovim through a thin Lua wrapper around
 use "alexpasmantier/tv.nvim"
 ```
 
-## 🖥️ Usage
+**Note**: requires [television](https://github.com/alexpasmantier/television) to be installed and available in your PATH.
 
-The integration currently only ports the "files" and "text" channels of television, which are the ones I use the most. More channels may be added in the future.
+## Configuration
 
-**Default keybindings:**
-
-| Keybinding                                  | Action         |
-| ------------------------------------------- | -------------- |
-| <kbd>Ctrl</kbd>+<kbd>p</kbd>                | Find files     |
-| <kbd>Leader</kbd>+<kbd>Leader</kbd>         | Search text    |
-| <kbd>Leader</kbd>+<kbd>t</kbd>+<kbd>v</kbd> | Select channel |
-
-**Commands:**
-
-- `:TvFiles` - Find files
-- `:TvText` - Search text
-- `:Tv` - Select channel
-
-**Inside tv:**
-
-| Keybinding                   | Action                           |
-| ---------------------------- | -------------------------------- |
-| <kbd>Enter</kbd>             | Open file(s) in buffers          |
-| <kbd>Ctrl</kbd>+<kbd>q</kbd> | Send selections to quickfix list |
-
-## ⚙️ Configuration
-
-Optional `setup()` for customization:
+Here's a comprehensive configuration example demonstrating the plugin's capabilities:
 
 ```lua
-require("tv").setup({
-  keybindings = {
-    files = "<C-p>",            -- or false to disable
-    text = "<leader><leader>",
-    channels = "<leader>tv",    -- channel selector
-    files_qf = "<C-q>",         -- quickfix binding (inside tv)
-    text_qf = "<C-q>",
+-- built-in niceties
+local h = require('tv').handlers
+
+require('tv').setup({
+  -- global window appearance (can be overridden per channel)
+  window = {
+    width = 0.8,       -- 80% of editor width
+    height = 0.8,      -- 80% of editor height
+    border = 'none',
+    title = ' tv.nvim ',
+    title_pos = 'center',
+  },
+  -- per-channel configurations
+  channels = {
+    -- `files`: fuzzy find files in your project
+    files = {
+      keybinding = '<C-p>',               -- Launch the files channel
+      -- what happens when you press a key
+      handlers = {
+        ['<CR>'] = h.open_as_files,         -- default: open selected files
+        ['<C-q>'] = h.send_to_quickfix,     -- send to quickfix list
+        ['<C-s>'] = h.open_in_split,       -- open in horizontal split
+        ['<C-v>'] = h.open_in_vsplit,      -- open in vertical split
+        ['<C-y>'] = h.copy_to_clipboard,   -- copy paths to clipboard
+      },
+    },
+
+    -- `text`: ripgrep search through file contents
+    text = {
+      keybinding = '<leader><leader>',
+      handlers = {
+        ['<CR>'] = h.open_at_line,         -- Jump to line:col in file
+        ['<C-q>'] = h.send_to_quickfix,    -- Send matches to quickfix
+        ['<C-s>'] = h.open_in_split,       -- Open in horizontal split
+        ['<C-v>'] = h.open_in_vsplit,      -- Open in vertical split
+        ['<C-y>'] = h.copy_to_clipboard,   -- Copy matches to clipboard
+      },
+    },
+
+    -- `git-log`: browse commit history
+    ['git-log'] = {
+      keybinding = '<leader>gl',
+      handlers = {
+        -- custom handler: show commit diff in scratch buffer
+        ['<CR>'] = function(entries, config)
+          if #entries > 0 then
+            vim.cmd('enew | setlocal buftype=nofile bufhidden=wipe')
+            vim.cmd('silent 0read !git show ' .. vim.fn.shellescape(entries[1]))
+            vim.cmd('1delete _ | setlocal filetype=git nomodifiable')
+            vim.cmd('normal! gg')
+          end
+        end,
+        -- copy commit hash to clipboard
+        ['<C-y>'] = h.copy_to_clipboard,
+      },
+    },
+
+    -- `git-branch`: browse git branches
+    ['git-branch'] = {
+      keybinding = '<leader>gb',
+      handlers = {
+        -- checkout branch using execute_shell_command helper
+        -- {} is replaced with the selected entry
+        ['<CR>'] = h.execute_shell_command('git checkout {}'),
+        ['<C-y>'] = h.copy_to_clipboard,
+      },
+    },
+
+    -- `docker-images`: browse images and run containers
+    ['docker-images'] = {
+      keybinding = '<leader>di',
+      window = { title = ' Docker Images ' },
+      handlers = {
+        -- run a container with the selected image
+        ['<CR>'] = function(entries, config)
+          if #entries > 0 then
+            local image = entries[1]:match('^%S+')  -- Extract image name
+            vim.ui.input({
+              prompt = 'Container name: ',
+              default = 'my-container',
+            }, function(name)
+              if name and name ~= '' then
+                local cmd = string.format('docker run -it --name %s %s', name, image)
+                vim.cmd('!' .. cmd)
+              end
+            end)
+          end
+        end,
+        -- copy image name
+        ['<C-y>'] = h.copy_to_clipboard,
+      },
+    },
+
+    -- `env`: search environment variables
+    env = {
+      keybinding = '<leader>ev',
+      handlers = {
+        ['<CR>'] = h.insert_at_cursor,      -- Insert at cursor position
+        ['<C-l>'] = h.insert_on_new_line,   -- Insert on new line
+        ['<C-y>'] = h.copy_to_clipboard,
+      },
+    },
+
+    -- `aliases`: search shell aliases
+    alias = {
+      keybinding = '<leader>al',
+      handlers = {
+        ['<CR>'] = h.insert_at_cursor,
+        ['<C-y>'] = h.copy_to_clipboard,
+      },
+    },
+  },
+  -- path to the tv binary (default: 'tv')
+  tv_binary = 'tv',
+  global_keybindings = {
+    channels = '<leader>tv',  -- opens the channel selector
   },
   quickfix = {
-    auto_open = true,      -- auto-open quickfix window
+    auto_open = true,  -- automatically open quickfix window after populating
   },
-  window = {
-    width = 0.8,           -- 80% of editor
-    height = 0.8,
-    border = "rounded",    -- none|single|double|rounded|solid|shadow
-    title = " tv ",
-  },
-  files = {
-    args = { "--preview-size", "70" },
-    window = {},           -- override window config for files
-  },
-  text = {
-    args = { "--preview-size", "70" },
-    window = {},           -- override window config for text
-  },
+
 })
 ```
 
-## Quickfix Workflow
+### Usage
 
-Use `<C-q>` inside tv to send selections to quickfix:
+**Commands:**
 
-1. Launch tv with files or text search
-2. Mark files/results in tv
-3. Press `<C-q>` to populate quickfix
-4. Navigate with `:cnext`, `:cprev`, perform actions with `:cdo`, etc.
+```vim
+:Tv files              " Find files
+:Tv text               " Search text in files
+:Tv text @TODO         " Search with pre-populated query
+:Tv git-log            " Browse commits
+:Tv                    " Open channel selector
+```
+
+**Or use the keybindings you configured above.**
+
+TV comes with 30+ built-in channels. Use `:Tv` to see all available channels, or try:
+
+```vim
+:Tv git-branch         " Switch branches
+:Tv zsh-history        " Browse command history
+:Tv procs              " List running processes
+```
+
+Tab completion works: `:Tv <Tab>`
+
+### Built-in Handlers Reference
+
+```lua
+local h = require('tv').handlers
+
+-- File operations
+h.open_as_files              -- Open selected entries as file buffers
+h.open_at_line               -- Open file at specific line:col (for text search results)
+h.open_in_split              -- Open in horizontal split
+h.open_in_vsplit             -- Open in vertical split
+h.open_in_scratch            -- Open in scratch (nofile) buffer
+
+-- List operations
+h.send_to_quickfix           -- Populate quickfix list with results
+
+-- Text operations
+h.copy_to_clipboard          -- Copy entries to system clipboard
+h.insert_at_cursor           -- Insert at cursor position
+h.insert_on_new_line         -- Insert each entry on new line
+
+-- Interactive
+h.show_in_select             -- Show vim.ui.select() menu for further actions
+
+-- Shell execution
+h.execute_shell_command(cmd) -- Execute shell command with selected entry
+                             -- Use {} as placeholder for the entry
+```
+
+Note: handlers are expected to be of the following signature:
+
+```lua
+---@alias tv.Handler fun(entries: string[], config: tv.Config)
+```
 
 ## License
 

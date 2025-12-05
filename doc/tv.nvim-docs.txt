@@ -83,12 +83,16 @@ Optional `setup()` for customization:
 
 >lua
     require("tv").setup({
-      keybindings = {
-        files = "<C-p>",            -- or false to disable
-        text = "<leader><leader>",
+      global_keybindings = {
         channels = "<leader>tv",    -- channel selector
-        files_qf = "<C-q>",         -- quickfix binding (inside tv)
-        text_qf = "<C-q>",
+      },
+      channels = {
+        files = {
+          keybinding = "<C-p>",     -- or false/nil to disable
+        },
+        text = {
+          keybinding = "<leader><leader>",
+        },
       },
       quickfix = {
         auto_open = true,      -- auto-open quickfix window
