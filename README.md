@@ -22,10 +22,24 @@ quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using lu
 
 ```lua
 -- lazy.nvim
-{ "alexpasmantier/tv.nvim" }
+{ 
+  "alexpasmantier/tv.nvim",
+  config = function()
+    require("tv").setup{
+      -- your config here (see Configuration section below)
+    }
+  end,
+}
 
 -- packer.nvim
-use "alexpasmantier/tv.nvim"
+use {
+  "alexpasmantier/tv.nvim",
+  config = function()
+    require("tv").setup{
+      -- your config here (see Configuration section below)
+    }
+  end,
+}
 ```
 
 **Note**: requires [television](https://github.com/alexpasmantier/television) to be installed and available in your PATH.
