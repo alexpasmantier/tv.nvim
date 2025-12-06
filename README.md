@@ -6,7 +6,7 @@
 
 Neovim integration for [television](https://github.com/alexpasmantier/television).
 
-The initial idea behind television was to create something like the popular [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
+The initial idea behind television was to create something like the popular telescope.nvim plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
 
 This plugin brings Television back into Neovim through a thin Lua wrapper around the binary. It started as a way to dogfood my own project, but might be of interest to other tv enthusiasts as well. Full circle.
 
@@ -18,18 +18,25 @@ If you're already familiar with [television](https://github.com/alexpasmantier/t
 quickfix, copy to clipboard, insert at cursor, checkout with git, etc.) using lua.
 
 ### Examples
-  
-  | text | git-log |
-  | :--: | :--: |
-  | <img width="1494" height="974" alt="text" src="https://github.com/user-attachments/assets/4d3d3cf7-6837-48b0-858d-6113bc0b0c3c" /> | <img width="1496" height="977" alt="git-log" src="https://github.com/user-attachments/assets/5f450a3a-47d3-4104-9bdd-41de1a325a27" /> |
-  | **tldr** | **gh-prs** |
-  | <img width="1491" height="973" alt="tldr" src="https://github.com/user-attachments/assets/c438d252-d742-44a5-b4c6-b7d931ea11a1" /> | <img width="1495" height="976" alt="gh-prs" src="https://github.com/user-attachments/assets/25d2235b-3827-4cd1-8a6f-a23e2a4690b1" /> | 
+
+|                                                                text                                                                |                                                                git-log                                                                |
+| :--------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="1494" height="974" alt="text" src="https://github.com/user-attachments/assets/4d3d3cf7-6837-48b0-858d-6113bc0b0c3c" /> | <img width="1496" height="977" alt="git-log" src="https://github.com/user-attachments/assets/5f450a3a-47d3-4104-9bdd-41de1a325a27" /> |
+|                                                              **tldr**                                                              |                                                              **gh-prs**                                                               |
+| <img width="1491" height="973" alt="tldr" src="https://github.com/user-attachments/assets/c438d252-d742-44a5-b4c6-b7d931ea11a1" /> | <img width="1495" height="976" alt="gh-prs" src="https://github.com/user-attachments/assets/25d2235b-3827-4cd1-8a6f-a23e2a4690b1" />  |
+
+<div align="center">
+
+Curious about channels available in television? Check out [this
+page](https://alexpasmantier.github.io/television/docs/Users/community-channels-unix).
+
+</div>
 
 ## Installation
 
 ```lua
 -- lazy.nvim
-{ 
+{
   "alexpasmantier/tv.nvim",
   config = function()
     require("tv").setup{
@@ -52,6 +59,47 @@ use {
 **Note**: requires [television](https://github.com/alexpasmantier/television) to be installed and available in your PATH.
 
 ## Configuration
+
+### Basic Setup
+
+Here's a minimal setup example to get you started, which includes configuration for the `files` and `text` channels that
+are the most commonly used ones:
+
+```lua
+local h = require('tv').handlers
+
+require('tv').setup({
+  -- per-channel configurations
+  channels = {
+    -- `files`: fuzzy find files in your project
+    files = {
+      keybinding = '<C-p>',               -- Launch the files channel
+      -- what happens when you press a key
+      handlers = {
+        ['<CR>'] = h.open_as_files,         -- default: open selected files
+        ['<C-q>'] = h.send_to_quickfix,     -- send to quickfix list
+        ['<C-s>'] = h.open_in_split,       -- open in horizontal split
+        ['<C-v>'] = h.open_in_vsplit,      -- open in vertical split
+        ['<C-y>'] = h.copy_to_clipboard,   -- copy paths to clipboard
+      },
+    },
+    -- `text`: ripgrep search through file contents
+    text = {
+      keybinding = '<leader><leader>',
+      handlers = {
+        ['<CR>'] = h.open_at_line,         -- Jump to line:col in file
+        ['<C-q>'] = h.send_to_quickfix,    -- Send matches to quickfix
+        ['<C-s>'] = h.open_in_split,       -- Open in horizontal split
+        ['<C-v>'] = h.open_in_vsplit,      -- Open in vertical split
+        ['<C-y>'] = h.copy_to_clipboard,   -- Copy matches to clipboard
+      },
+    },
+  },
+})
+
+```
+
+### Full Configuration
 
 Here's a comprehensive configuration example demonstrating the plugin's capabilities:
 
