@@ -9,7 +9,7 @@
 **📺 Neovim integration for [television](https://github.com/alexpasmantier/television).**
 </div>
 
-[![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
+![demo](https://github.com/user-attachments/assets/14e743a5-e839-4eed-963b-e111d4e7d8b2)
 
 The initial idea behind television was to create something like the popular telescope.nvim plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
 
