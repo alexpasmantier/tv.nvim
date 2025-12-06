@@ -1,16 +1,19 @@
-# 📺 tv.nvim
+<div align="center" style="color: #abb2bf;font-family: 'Fira Code', monospace;">
 
-![Static Badge](https://img.shields.io/badge/neovim-lua-pink)
-![GitHub last commit](https://img.shields.io/github/last-commit/alexpasmantier/tv.nvim)
-![GitHub License](https://img.shields.io/github/license/alexpasmantier/tv.nvim)
+# tv.nvim
 
-Neovim integration for [television](https://github.com/alexpasmantier/television).
+[![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-7e98e8.svg?style=for-the-badge&logo=neovim)](https://neovim.io/)
+![Lua](https://img.shields.io/badge/Made%20with%20Lua-8faf77.svg?style=for-the-badge&logo=lua)
+
+
+**📺 Neovim integration for [television](https://github.com/alexpasmantier/television).**
+</div>
+
+[![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
 
 The initial idea behind television was to create something like the popular telescope.nvim plugin, but as a standalone terminal application - keeping telescope's modularity without the Neovim dependency, and benefiting from Rust's performance.
 
 This plugin brings Television back into Neovim through a thin Lua wrapper around the binary. It started as a way to dogfood my own project, but might be of interest to other tv enthusiasts as well. Full circle.
-
-[![asciicast](https://asciinema.org/a/754777.svg?t=9&)](https://asciinema.org/a/754777)
 
 ## Overview
 
