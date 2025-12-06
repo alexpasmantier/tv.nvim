@@ -1,4 +1,4 @@
-*tv.nvim-docs.txt*      For Neovim >= 0.8.0      Last change: 2025 December 05
+*tv.nvim-docs.txt*      For Neovim >= 0.8.0      Last change: 2025 December 06
 
 ==============================================================================
 Table of Contents                             *tv.nvim-docs-table-of-contents*
@@ -19,9 +19,9 @@ Neovim integration for television
 <https://github.com/alexpasmantier/television>.
 
 The initial idea behind television was to create something like the popular
-telescope.nvim <https://github.com/nvim-telescope/telescope.nvim> plugin, but
-as a standalone terminal application - keeping telescope’s modularity without
-the Neovim dependency, and benefiting from Rust’s performance.
+telescope.nvim plugin, but as a standalone terminal application - keeping
+telescope’s modularity without the Neovim dependency, and benefiting from
+Rust’s performance.
 
 This plugin brings Television back into Neovim through a thin Lua wrapper
 around the binary. It started as a way to dogfood my own project, but might be
@@ -51,11 +51,12 @@ EXAMPLES ~
                                       
   -----------------------------------------------------------------------
 
+
 INSTALLATION                               *tv.nvim-docs-tv.nvim-installation*
 
 >lua
     -- lazy.nvim
-    { 
+    {
       "alexpasmantier/tv.nvim",
       config = function()
         require("tv").setup{
@@ -80,6 +81,49 @@ be installed and available in your PATH.
 
 
 CONFIGURATION                             *tv.nvim-docs-tv.nvim-configuration*
+
+
+BASIC SETUP ~
+
+Here’s a minimal setup example to get you started, which includes
+configuration for the `files` and `text` channels that are the most commonly
+used ones:
+
+>lua
+    local h = require('tv').handlers
+    
+    require('tv').setup({
+      -- per-channel configurations
+      channels = {
+        -- `files`: fuzzy find files in your project
+        files = {
+          keybinding = '<C-p>',               -- Launch the files channel
+          -- what happens when you press a key
+          handlers = {
+            ['<CR>'] = h.open_as_files,         -- default: open selected files
+            ['<C-q>'] = h.send_to_quickfix,     -- send to quickfix list
+            ['<C-s>'] = h.open_in_split,       -- open in horizontal split
+            ['<C-v>'] = h.open_in_vsplit,      -- open in vertical split
+            ['<C-y>'] = h.copy_to_clipboard,   -- copy paths to clipboard
+          },
+        },
+        -- `text`: ripgrep search through file contents
+        text = {
+          keybinding = '<leader><leader>',
+          handlers = {
+            ['<CR>'] = h.open_at_line,         -- Jump to line:col in file
+            ['<C-q>'] = h.send_to_quickfix,    -- Send matches to quickfix
+            ['<C-s>'] = h.open_in_split,       -- Open in horizontal split
+            ['<C-v>'] = h.open_in_vsplit,      -- Open in vertical split
+            ['<C-y>'] = h.copy_to_clipboard,   -- Copy matches to clipboard
+          },
+        },
+      },
+    })
+<
+
+
+FULL CONFIGURATION ~
 
 Here’s a comprehensive configuration example demonstrating the plugin’s
 capabilities:
