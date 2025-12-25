@@ -1,4 +1,4 @@
-*tv.nvim-docs.txt*      For Neovim >= 0.8.0      Last change: 2025 December 06
+*tv.nvim-docs.txt*      For Neovim >= 0.8.0      Last change: 2025 December 25
 
 ==============================================================================
 Table of Contents                             *tv.nvim-docs-table-of-contents*
