@@ -5,7 +5,10 @@ Table of Contents                             *tv.nvim-docs-table-of-contents*
 
   - Overview                                           |tv.nvim-docs-overview|
   - Installation                                   |tv.nvim-docs-installation|
+  - Usage                                                 |tv.nvim-docs-usage|
   - Configuration                                 |tv.nvim-docs-configuration|
+  - Troubleshooting                             |tv.nvim-docs-troubleshooting|
+  - Built-in Handlers Reference     |tv.nvim-docs-built-in-handlers-reference|
   - License                                             |tv.nvim-docs-license|
 1. Links                                                  |tv.nvim-docs-links|
 
@@ -67,6 +70,32 @@ INSTALLATION                                       *tv.nvim-docs-installation*
 
 **Note**: requires television <https://github.com/alexpasmantier/television> to
 be installed and available in your PATH.
+
+
+USAGE                                                     *tv.nvim-docs-usage*
+
+**Commands:**
+
+>vim
+    :Tv files              " Find files
+    :Tv text               " Search text in files
+    :Tv text @TODO         " Search with pre-populated query
+    :Tv git-log            " Browse commits
+    :Tv                    " Open channel selector
+<
+
+**Or use the keybindings you configured above.**
+
+TV comes with 30+ built-in channels. Use `:Tv` to see all available channels,
+or try:
+
+>vim
+    :Tv git-branch         " Switch branches
+    :Tv zsh-history        " Browse command history
+    :Tv procs              " List running processes
+<
+
+Tab completion works: `:Tv <Tab>`
 
 
 CONFIGURATION                                     *tv.nvim-docs-configuration*
@@ -251,33 +280,7 @@ plugin’s capabilities:
 <
 
 
-USAGE ~
-
-**Commands:**
-
->vim
-    :Tv files              " Find files
-    :Tv text               " Search text in files
-    :Tv text @TODO         " Search with pre-populated query
-    :Tv git-log            " Browse commits
-    :Tv                    " Open channel selector
-<
-
-**Or use the keybindings you configured above.**
-
-TV comes with 30+ built-in channels. Use `:Tv` to see all available channels,
-or try:
-
->vim
-    :Tv git-branch         " Switch branches
-    :Tv zsh-history        " Browse command history
-    :Tv procs              " List running processes
-<
-
-Tab completion works: `:Tv <Tab>`
-
-
-TROUBLESHOOTING ~
+TROUBLESHOOTING                                 *tv.nvim-docs-troubleshooting*
 
 If you’re on tv <= 0.14.1 and aren’t a terminal tv user, you might need to
 pull the default set of channels from the repo by running:
@@ -290,7 +293,7 @@ Versions >= 0.14.2 bundle a subset of default channels within the binary itself
 to avoid that inconvenience.
 
 
-BUILT-IN HANDLERS REFERENCE ~
+BUILT-IN HANDLERS REFERENCE         *tv.nvim-docs-built-in-handlers-reference*
 
 >lua
     local h = require('tv').handlers
