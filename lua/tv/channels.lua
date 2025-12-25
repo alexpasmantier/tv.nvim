@@ -122,7 +122,10 @@ function M.select()
   end
 
   if #channels == 0 then
-    vim.notify("No channels available", vim.log.levels.WARN)
+    vim.notify(
+      "No channels available\nTry running `tv update-channels` to udpate your channel list",
+      vim.log.levels.WARN
+    )
     return
   end
 
