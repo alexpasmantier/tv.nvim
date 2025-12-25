@@ -61,6 +61,30 @@ use {
 
 **Note**: requires [television](https://github.com/alexpasmantier/television) to be installed and available in your PATH.
 
+## Usage
+
+**Commands:**
+
+```vim
+:Tv files              " Find files
+:Tv text               " Search text in files
+:Tv text @TODO         " Search with pre-populated query
+:Tv git-log            " Browse commits
+:Tv                    " Open channel selector
+```
+
+**Or use the keybindings you configured above.**
+
+TV comes with 30+ built-in channels. Use `:Tv` to see all available channels, or try:
+
+```vim
+:Tv git-branch         " Switch branches
+:Tv zsh-history        " Browse command history
+:Tv procs              " List running processes
+```
+
+Tab completion works: `:Tv <Tab>`
+
 ## Configuration
 
 ### Basic Setup
@@ -238,31 +262,7 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
   },
 ```
 
-### Usage
-
-**Commands:**
-
-```vim
-:Tv files              " Find files
-:Tv text               " Search text in files
-:Tv text @TODO         " Search with pre-populated query
-:Tv git-log            " Browse commits
-:Tv                    " Open channel selector
-```
-
-**Or use the keybindings you configured above.**
-
-TV comes with 30+ built-in channels. Use `:Tv` to see all available channels, or try:
-
-```vim
-:Tv git-branch         " Switch branches
-:Tv zsh-history        " Browse command history
-:Tv procs              " List running processes
-```
-
-Tab completion works: `:Tv <Tab>`
-
-### Troubleshooting
+## Troubleshooting
 
 If you're on tv <= 0.14.1 and aren't a terminal tv user, you might need to pull the default set of channels from the repo by running:
 
@@ -272,7 +272,7 @@ tv update-channels
 
 Versions >= 0.14.2 bundle a subset of default channels within the binary itself to avoid that inconvenience.
 
-### Built-in Handlers Reference
+## Built-in Handlers Reference
 
 ```lua
 local h = require('tv').handlers
