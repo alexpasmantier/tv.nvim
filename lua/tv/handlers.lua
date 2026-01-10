@@ -230,4 +230,16 @@ function M.show_in_select(entries, _)
   end)
 end
 
+---Open first git range in CodeDiff (ignores subsequent ones)
+---@param entries string[]
+---@param _ tv.Config
+function M.open_in_codediff(entries, _)
+  if vim.fn.system("git rev-parse --show-toplevel") == "" then
+    vim.notify("Not a git repository", vim.log.levels.ERROR, { title = "tv.nvim" })
+    return
+  end
+
+  vim.cmd("CodeDiff " .. entries[1])
+end
+
 return M
