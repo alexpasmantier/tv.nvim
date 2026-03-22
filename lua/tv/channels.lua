@@ -14,6 +14,11 @@ local function launch_channel(channel, handler_map, prompt_input)
   local channel_config = config.get_channel_config(channel)
   vim.list_extend(cmd, channel_config.args)
 
+  local layout = config.get_layout(channel)
+  if layout then
+    vim.list_extend(cmd, { "--layout", layout })
+  end
+
   if handler_map and type(handler_map) == "table" then
     local expect_keys = {}
     for nvim_key, _ in pairs(handler_map) do

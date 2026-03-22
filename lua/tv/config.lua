@@ -9,9 +9,11 @@ local function get_handlers()
 end
 
 local DEFAULT_TV_ARGS = { "--no-remote", "--no-status-bar" }
+local VALID_LAYOUTS = { landscape = true, portrait = true }
 
 M.defaults = {
   tv_binary = "tv",
+  layout = "landscape",
   quickfix = {
     auto_open = true,
   },
@@ -27,7 +29,7 @@ M.defaults = {
   },
   channels = {
     files = {
-      args = { "--no-remote", "--no-status-bar", "--preview-size", "70", "--layout", "portrait" },
+      args = { "--no-remote", "--no-status-bar", "--preview-size", "70" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)
@@ -39,7 +41,7 @@ M.defaults = {
       },
     },
     text = {
-      args = { "--no-remote", "--no-status-bar", "--preview-size", "70", "--layout", "portrait" },
+      args = { "--no-remote", "--no-status-bar", "--preview-size", "70" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)
@@ -92,6 +94,17 @@ function M.initialize_channel_defaults()
       M.current.channels[channel_name] = defaults
     end
   end
+end
+
+function M.get_layout(channel)
+  local layout = M.current.layout
+  if channel and M.current.channels[channel] and M.current.channels[channel].layout then
+    layout = M.current.channels[channel].layout
+  end
+  if layout and VALID_LAYOUTS[layout] then
+    return layout
+  end
+  return nil
 end
 
 function M.get_window_config(channel)

@@ -4,6 +4,7 @@ local M = {}
 
 ---@class tv.Config
 ---@field tv_binary string
+---@field layout? string
 ---@field quickfix { auto_open: boolean }
 ---@field window { width: number, height: number, border: string, title: string, title_pos: string }
 ---@field global_keybindings { channels: string }
@@ -12,6 +13,7 @@ local M = {}
 ---@class tv.ChannelConfig
 ---@field keybinding? string
 ---@field args? string[]
+---@field layout? string
 ---@field window? { width?: number, height?: number, border?: string, title?: string, title_pos?: string }
 ---@field handlers? table<string, tv.Handler>
 
