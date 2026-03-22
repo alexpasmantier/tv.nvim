@@ -13,7 +13,9 @@ function M.create(channel)
   local col = (editor_width - tv_width) / 2
 
   local buffer = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_open_win(buffer, true, {
+  vim.bo[buffer].filetype = "tv"
+
+  local window = vim.api.nvim_open_win(buffer, true, {
     relative = "editor",
     width = tv_width,
     height = tv_height,
@@ -23,6 +25,9 @@ function M.create(channel)
     title = window_config.title,
     title_pos = window_config.title_pos,
   })
+  vim.wo[window].spell = false
+
+  return window
 end
 
 return M
