@@ -142,6 +142,7 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
       local h = require("tv").handlers
 
       require("tv").setup({
+        layout = "landscape", -- "landscape" (default) or "portrait"
         -- global window appearance (can be overridden per channel)
         window = {
           width = 0.8, -- 80% of editor width
@@ -154,6 +155,7 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
         channels = {
           -- `files`: fuzzy find files in your project
           files = {
+            layout = "portrait", --- override global setting for this channel
             keybinding = "<C-p>", -- Launch the files channel
             -- what happens when you press a key
             handlers = {
