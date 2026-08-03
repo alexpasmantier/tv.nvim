@@ -142,12 +142,12 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
       local h = require("tv").handlers
 
       require("tv").setup({
-        layout = "landscape", -- "landscape" (default) or "portrait"
+        layout = "landscape", -- optional global override: "landscape" or "portrait"
         -- global window appearance (can be overridden per channel)
         window = {
           width = 0.8, -- 80% of editor width
           height = 0.8, -- 80% of editor height
-          border = "none",
+          border = "rounded",
           title = " tv.nvim ",
           title_pos = "center",
         },

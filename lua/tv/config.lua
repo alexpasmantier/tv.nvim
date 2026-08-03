@@ -13,7 +13,6 @@ local VALID_LAYOUTS = { landscape = true, portrait = true }
 
 M.defaults = {
   tv_binary = "tv",
-  layout = "landscape",
   quickfix = {
     auto_open = true,
   },
@@ -29,7 +28,7 @@ M.defaults = {
   },
   channels = {
     files = {
-      args = { "--no-remote", "--no-status-bar", "--preview-size", "70" },
+      args = { "--no-remote", "--no-status-bar" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)
@@ -41,7 +40,7 @@ M.defaults = {
       },
     },
     text = {
-      args = { "--no-remote", "--no-status-bar", "--preview-size", "70" },
+      args = { "--no-remote", "--no-status-bar" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)

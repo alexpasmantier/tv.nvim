@@ -119,6 +119,16 @@ describe("tv.nvim", function()
     it("has expected default quickfix config", function()
       assert.are.equal(true, tv.config.quickfix.auto_open)
     end)
+
+    it("passes no layout unless explicitly configured", function()
+      assert.is_nil(tv_config.get_layout("files"))
+
+      tv.setup({ layout = "portrait" })
+      assert.are.equal("portrait", tv_config.get_layout("files"))
+
+      tv.setup({ channels = { files = { layout = "landscape" } } })
+      assert.are.equal("landscape", tv_config.get_layout("files"))
+    end)
   end)
 
   describe("_convert_keybinding_to_tv_format", function()
