@@ -85,6 +85,17 @@ TV comes with 30+ built-in channels. Use `:Tv` to see all available channels, or
 
 Tab completion works: `:Tv <Tab>`
 
+### Ad-hoc Channels
+
+`pick(entries, opts)` lets Neovim integrations supply entries to a Television
+ad-hoc channel.
+
+- `entries` is the list of strings Television searches.
+- `opts.args` contains optional Television CLI arguments; `pick` manages
+  `--source-command` and `--expect`.
+- `opts.handlers` is a required map from keys such as `<CR>` to `tv.Handler`
+  functions. Each handler receives the selected entries and current `tv.Config`.
+
 ## Configuration
 
 By default, tv.nvim passes no extra command-line arguments to `tv`: your television configuration (status bar, preview
@@ -265,6 +276,39 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
           auto_open = true, -- automatically open quickfix window after populating
         },
       })
+
+      -- ad-hoc channel: browse listed Neovim buffers
+      vim.keymap.set("n", "<leader>fb", function()
+        local buffers = {}
+        for _, buffer in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+          if buffer.name ~= "" and vim.fn.filereadable(buffer.name) == 1 then
+            -- encode the buffer number, display name, and file path as tab-separated fields
+            table.insert(buffers, ("%d\t%s\t%s"):format(
+              buffer.bufnr,
+              vim.fn.fnamemodify(buffer.name, ":~:."),
+              vim.fn.shellescape(buffer.name)
+            ))
+          end
+        end
+
+        require("tv").pick(buffers, {
+          args = {
+            "--input-header", "Buffers", -- label the Television input
+            "--source-display", "{split:\\t:1}", -- show the buffer name
+            "--source-output", "{split:\\t:0}", -- return the buffer number
+            "--preview-command", "bat -n --color=always {split:\\t:2}", -- preview the file with bat
+          },
+          handlers = {
+            ["<CR>"] = function(entries)
+              local bufnr = tonumber(entries[1])
+              if bufnr then
+                -- switch to the buffer number returned by Television
+                vim.api.nvim_set_current_buf(bufnr)
+              end
+            end,
+          },
+        })
+      end, { desc = "Find buffers" }) -- describe the Neovim mapping
     end,
   },
 ```

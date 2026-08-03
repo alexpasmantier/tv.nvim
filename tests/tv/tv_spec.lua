@@ -131,6 +131,95 @@ describe("tv.nvim", function()
     end)
   end)
 
+  describe("ad-hoc channels", function()
+    local original = {}
+    local state
+
+    before_each(function()
+      state = {}
+      original.jobstart = vim.fn.jobstart
+      original.tempname = vim.fn.tempname
+
+      vim.fn.tempname = function()
+        state.source_path = original.tempname()
+        return state.source_path
+      end
+      vim.fn.jobstart = function(command, options)
+        state.job = { command = vim.deepcopy(command), options = options }
+        state.window = vim.api.nvim_get_current_win()
+        state.buffer = vim.api.nvim_get_current_buf()
+        return 1
+      end
+    end)
+
+    after_each(function()
+      vim.fn.jobstart = original.jobstart
+      vim.fn.tempname = original.tempname
+
+      if state.window and vim.api.nvim_win_is_valid(state.window) then
+        vim.api.nvim_win_close(state.window, true)
+      end
+      if state.buffer and vim.api.nvim_buf_is_valid(state.buffer) then
+        vim.api.nvim_buf_delete(state.buffer, { force = true })
+      end
+      if state.source_path then
+        vim.fn.delete(state.source_path)
+      end
+    end)
+
+    it("passes arguments and routes exact selections", function()
+      local received
+      tv.pick({ "1\tFirst", "2\tSecond" }, {
+        args = { "--source-display", "{split:\\t:1}" },
+        handlers = {
+          ["<CR>"] = function() end,
+          ["<C-s>"] = function(entries)
+            received = entries
+          end,
+        },
+      })
+
+      local read_command = vim.fn.has("win32") == 1 and "type" or "cat"
+      assert.are.same({
+        "tv",
+        "--source-display",
+        "{split:\\t:1}",
+        "--source-command",
+        read_command .. " " .. vim.fn.shellescape(state.source_path),
+        "--expect",
+        "ctrl-s;enter",
+      }, state.job.command)
+      vim.api.nvim_buf_set_lines(state.buffer, 0, -1, false, { "ctrl-s", "  first  ", "second" })
+      state.job.options.on_exit(1, 0)
+
+      assert.are.same({ "  first  ", "second" }, received)
+      assert.are.equal(0, vim.fn.filereadable(state.source_path))
+    end)
+
+    it("does not mistake an automatic selection for a confirmation key", function()
+      local received
+      local ctrl_s_called = false
+      tv.pick({ "ctrl-s" }, {
+        args = { "--take-1" },
+        handlers = {
+          ["<CR>"] = function(entries)
+            received = entries
+          end,
+          ["<C-s>"] = function()
+            ctrl_s_called = true
+          end,
+        },
+      })
+
+      assert.is_false(vim.tbl_contains(state.job.command, "--expect"))
+      vim.api.nvim_buf_set_lines(state.buffer, 0, -1, false, { "ctrl-s" })
+      state.job.options.on_exit(1, 0)
+
+      assert.are.same({ "ctrl-s" }, received)
+      assert.is_false(ctrl_s_called)
+    end)
+  end)
+
   describe("_convert_keybinding_to_tv_format", function()
     local convert = tv._convert_keybinding_to_tv_format
 

@@ -109,6 +109,141 @@ function M.launch(channel_name, prompt_input)
   launch_channel(channel_name, channel_config.handlers, prompt_input)
 end
 
+---@class tv.PickOptions
+---@field args? string[]
+---@field handlers table<string, tv.Handler>
+
+local function selects_automatically(args, entry_count)
+  for _, arg in ipairs(args) do
+    if arg == "--take-1" or arg == "--take-1-fast" or (arg == "--select-1" and entry_count == 1) then
+      return true
+    end
+  end
+  return false
+end
+
+local function launch_picker(entries, opts)
+  local source_path = vim.fn.tempname()
+  if vim.fn.writefile(entries, source_path) ~= 0 then
+    vim.fn.delete(source_path)
+    vim.notify("Failed to write ad-hoc channel entries", vim.log.levels.ERROR, { title = "tv.nvim" })
+    return
+  end
+
+  local args = opts.args or {}
+  local cmd = { config.current.tv_binary }
+  vim.list_extend(cmd, args)
+
+  local read_command = vim.fn.has("win32") == 1 and "type" or "cat"
+  vim.list_extend(cmd, { "--source-command", read_command .. " " .. vim.fn.shellescape(source_path) })
+
+  local handlers_by_key = {}
+  local expect_keys = {}
+  for nvim_key, handler in pairs(opts.handlers) do
+    local tv_key = utils.convert_keybinding_to_tv_format(nvim_key)
+    if tv_key then
+      handlers_by_key[tv_key] = handler
+      table.insert(expect_keys, tv_key)
+    end
+  end
+
+  table.sort(expect_keys)
+  local has_expect = not selects_automatically(args, #entries) and #expect_keys > 0
+  if has_expect then
+    vim.list_extend(cmd, { "--expect", table.concat(expect_keys, ";") })
+  end
+
+  local tv_window = window.create()
+  local tv_buffer = vim.api.nvim_win_get_buf(tv_window)
+  local error_output = {}
+
+  local function finish()
+    vim.fn.delete(source_path)
+    pcall(vim.api.nvim_win_close, tv_window, true)
+  end
+
+  local job = vim.fn.jobstart(cmd, {
+    on_stderr = function(_, data)
+      if data then
+        for _, line in ipairs(data) do
+          if line ~= "" then
+            table.insert(error_output, line)
+          end
+        end
+      end
+    end,
+    on_exit = function(_, exit_code)
+      local output = vim.api.nvim_buf_is_valid(tv_buffer) and vim.api.nvim_buf_get_lines(tv_buffer, 0, -1, false) or {}
+      finish()
+
+      if exit_code ~= 0 then
+        local error_msg = "TV exited with code " .. exit_code
+        if #error_output > 0 then
+          error_msg = error_msg .. ":\n" .. table.concat(error_output, "\n")
+        end
+        vim.notify(error_msg, vim.log.levels.ERROR, { title = "tv.nvim" })
+        return
+      end
+
+      if #error_output > 0 then
+        vim.notify(table.concat(error_output, "\n"), vim.log.levels.WARN, { title = "tv.nvim" })
+      end
+
+      local handler
+      local start_idx = 1
+      if has_expect then
+        handler = handlers_by_key[vim.trim(output[1] or "")]
+        start_idx = 2
+      else
+        handler = handlers_by_key.enter
+      end
+
+      local selected = {}
+      for i = start_idx, #output do
+        if output[i] ~= "" then
+          table.insert(selected, output[i])
+        end
+      end
+
+      if handler and #selected > 0 then
+        handler(selected, config.current)
+      end
+    end,
+    term = true,
+  })
+
+  if job <= 0 then
+    finish()
+    vim.notify("Failed to start TV", vim.log.levels.ERROR, { title = "tv.nvim" })
+    return
+  end
+
+  vim.cmd("startinsert")
+end
+
+---Open a Television ad-hoc channel for the given entries
+---@param entries string[]
+---@param opts tv.PickOptions
+function M.pick(entries, opts)
+  vim.validate({
+    entries = { entries, "table" },
+    opts = { opts, "table" },
+  })
+  vim.validate({
+    args = { opts.args, "table", true },
+    handlers = { opts.handlers, "table" },
+  })
+
+  if #entries == 0 then
+    return
+  end
+  if vim.tbl_isempty(opts.handlers) then
+    error("opts.handlers must not be empty")
+  end
+
+  launch_picker(entries, opts)
+end
+
 function M.select()
   local handle = io.popen(config.current.tv_binary .. " list-channels 2>/dev/null")
   if not handle then
