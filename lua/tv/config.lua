@@ -8,7 +8,6 @@ local function get_handlers()
   return handlers
 end
 
-local DEFAULT_TV_ARGS = { "--no-remote", "--no-status-bar" }
 local VALID_LAYOUTS = { landscape = true, portrait = true }
 
 M.defaults = {
@@ -28,7 +27,6 @@ M.defaults = {
   },
   channels = {
     files = {
-      args = { "--no-remote", "--no-status-bar" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)
@@ -40,7 +38,6 @@ M.defaults = {
       },
     },
     text = {
-      args = { "--no-remote", "--no-status-bar" },
       keybinding = nil,
       handlers = {
         ["<CR>"] = function(entries, config)
@@ -55,45 +52,6 @@ M.defaults = {
 }
 
 M.current = vim.deepcopy(M.defaults)
-
-local discovered_channels = nil
-local function discover_channels(tv_binary)
-  if discovered_channels then
-    return discovered_channels
-  end
-
-  local handle = io.popen(tv_binary .. " list-channels 2>/dev/null")
-  if not handle then
-    return {}
-  end
-
-  local result = handle:read("*a")
-  handle:close()
-
-  local channels = {}
-  for channel in result:gmatch("[^\r\n]+") do
-    if channel ~= "" then
-      table.insert(channels, channel)
-    end
-  end
-
-  discovered_channels = channels
-  return channels
-end
-
-function M.initialize_channel_defaults()
-  local channels = discover_channels(M.current.tv_binary)
-  local defaults = { args = DEFAULT_TV_ARGS }
-
-  for _, channel_name in ipairs(channels) do
-    local user_config = M.current.channels[channel_name]
-    if user_config then
-      M.current.channels[channel_name] = vim.tbl_deep_extend("force", defaults, user_config)
-    else
-      M.current.channels[channel_name] = defaults
-    end
-  end
-end
 
 function M.get_layout(channel)
   local layout = M.current.layout
@@ -116,15 +74,7 @@ function M.get_window_config(channel)
 end
 
 function M.get_channel_config(channel)
-  if not discovered_channels then
-    M.initialize_channel_defaults()
-  end
-
-  if M.current.channels[channel] then
-    return M.current.channels[channel]
-  end
-
-  return { args = DEFAULT_TV_ARGS }
+  return M.current.channels[channel] or {}
 end
 
 function M.merge(user_config)

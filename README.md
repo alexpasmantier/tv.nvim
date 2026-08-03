@@ -87,6 +87,10 @@ Tab completion works: `:Tv <Tab>`
 
 ## Configuration
 
+By default, tv.nvim passes no extra command-line arguments to `tv`: your television configuration (status bar, preview
+size, orientation, remote control, ...) applies as-is. Use the per-channel `args` option to override tv settings for a
+specific channel.
+
 ### Basic Setup
 
 Here's a minimal setup example to get you started, which includes configuration for the `files` and `text` channels that
@@ -156,6 +160,7 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
           -- `files`: fuzzy find files in your project
           files = {
             layout = "portrait", --- override global setting for this channel
+            args = { "--no-status-bar", "--preview-size", "70" }, -- extra CLI args passed to tv
             keybinding = "<C-p>", -- Launch the files channel
             -- what happens when you press a key
             handlers = {

@@ -12,7 +12,7 @@ local function launch_channel(channel, handler_map, prompt_input)
 
   local cmd = { config.current.tv_binary }
   local channel_config = config.get_channel_config(channel)
-  vim.list_extend(cmd, channel_config.args)
+  vim.list_extend(cmd, channel_config.args or {})
 
   local layout = config.get_layout(channel)
   if layout then

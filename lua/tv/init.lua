@@ -56,7 +56,6 @@ function M.setup(opts)
   if opts then
     config.merge(opts)
   end
-  config.initialize_channel_defaults()
   setup_keybindings()
 end
 
