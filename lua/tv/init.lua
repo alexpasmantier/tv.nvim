@@ -8,6 +8,7 @@ local M = {}
 ---@class tv.Module
 ---@field tv_channel fun(channel: string, prompt_input?: string): nil
 ---@field tv_channels fun(): nil
+---@field pick fun(entries: string[], opts: tv.PickOptions): nil
 ---@field tv_files fun(prompt_input?: string): nil
 ---@field tv_text fun(prompt_input?: string): nil
 ---@field setup fun(opts?: tv.Config): nil
@@ -28,6 +29,7 @@ local M = {}
 
 M.tv_channel = channels.launch
 M.tv_channels = channels.select
+M.pick = channels.pick
 
 M.handlers = handlers
 M.config = config.current
