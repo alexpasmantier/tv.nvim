@@ -269,6 +269,19 @@ Here's a more comprehensive configuration example demonstrating the plugin's cap
   },
 ```
 
+## Public API
+
+```lua
+require("tv").tv_channels() -- to view available channels
+require("tv").tv_channel(channel, prompt_input) -- send input to a specific channel
+```
+
+### Example: search for word under cursor
+
+```lua
+require("tv").tv_channel("text", vim.fn.expand("<cword>"))
+```
+
 ## Troubleshooting
 
 If you're on tv <= 0.14.1 and aren't a terminal tv user, you might need to pull the default set of channels from the repo by running:
